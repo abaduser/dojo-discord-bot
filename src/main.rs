@@ -12,7 +12,7 @@ use serenity::framework::standard::{
     macros::{command, group}
 };
 
-const NONSENSE: [&str;4] = ["Quake3 net", "unlag", "OSP", "Q3 net"];
+const NONSENSE: [&str;6] = ["quake3 net", "Q3 net", "unlag", "osp net", "cpma unlag", "cpma netcode"];
 
 
 #[command]
@@ -30,7 +30,7 @@ struct Handler;
 impl EventHandler for Handler {
     async fn message(&self, ctx:Context, msg: Message){
         for n in NONSENSE{
-            if msg.content.contains(n) && !msg.author.bot {
+            if msg.content.to_lowercase().contains(n) && !msg.author.bot {
                 msg.reply_ping(&ctx, "Sorry but I was programmed to explain why Quake3 netcode is shite\nhttps://cdn.discordapp.com/attachments/1039074867816955914/1067954505737568306/halfspeedserverview1.mp4")
                 .await
                 .expect("Err processing nonsense");
