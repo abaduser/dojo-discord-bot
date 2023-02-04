@@ -28,12 +28,13 @@ struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-
     async fn message(&self, ctx:Context, msg: Message){
         for n in NONSENSE{
-            if msg.content.contains(n){
-                msg.channel_id.say(&ctx, "Sorry but I was programmed to explain why Quake3 netcode is shite\nhttps://cdn.discordapp.com/attachments/1039074867816955914/1067954505737568306/halfspeedserverview1.mp4")
-                .await.expect("Could not net-code reply.");
+            if msg.content.contains(n) && !msg.author.bot {
+                msg.reply_ping(&ctx, "Sorry but I was programmed to explain why Quake3 netcode is shite\nhttps://cdn.discordapp.com/attachments/1039074867816955914/1067954505737568306/halfspeedserverview1.mp4")
+                .await
+                .expect("Err processing nonsense");
+                return;
             }
         }
     }
