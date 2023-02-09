@@ -3,6 +3,7 @@ use serenity::async_trait;
 use serenity::client::{Client, Context};
 use serenity::framework::standard::help_commands::Command;
 use serenity::model::mention;
+use serenity::model::prelude::RoleId;
 use serenity::prelude::*;
 use serenity::model::{
     mention::Mention,
@@ -19,22 +20,24 @@ use serenity::framework::standard::{
 const NONSENSE: [&str;8] = ["quake3 net", "quake 3 net", "q 3 net", "q3 net", "unlag", "osp net", "cpma unlag", "cpma netcode"];
 const Q3_REPLY_STRING: &str = "Quake3 is shit\nhttps://cdn.discordapp.com/attachments/1039074867816955914/1067954505737568306/halfspeedserverview1.mp4\nPlay QuakeLive for the most up to date netcode";
 
+const NEWUSERROLE_ID: u64 = 1072730906395168808;
 const LFD_CHANNEL: u64 = 1072730815089344532;
+const "Hello {}, welcome to The Dojo. We approve new members manually, so while you wait check out https://thedojo.ninja/ for information about us and our servers."
 struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
 
     async fn guild_member_addition(&self, ctx:Context, member:Member){
-        let info = format!("Hello {}, welcome to The Dojo. We approve new members manually, so while you wait check out https://thedojo.ninja/ for information about us and our servers.", member.display_name());
-        match member.user.direct_message(ctx, |m| m.content(info)).await{
+        let info = format!();
+        match member.user.direct_message(ctx.clone(), |m| m.content(info)).await{
             Err(e) => println!("Err sending dm!\n{:?}",e),
             _ => ()
         }
+        member.clone().add_role(ctx.clone(), RoleId::from(NEWUSERROLE_ID)).await.unwrap();
     }
 
-    async fn message(&self, ctx:Context, msg: Message){
-        
+    async fn message(&self, ctx:Context, msg: Message){ 
         match env::var_os("FUCKQ3"){
             Some(s) => {
                 if s.into_string().unwrap() == "YES"{
