@@ -19,6 +19,7 @@ use serenity::framework::standard::{
 const NONSENSE: [&str;8] = ["quake3 net", "quake 3 net", "q 3 net", "q3 net", "unlag", "osp net", "cpma unlag", "cpma netcode"];
 const Q3_REPLY_STRING: &str = "Quake3 is shit\nhttps://cdn.discordapp.com/attachments/1039074867816955914/1067954505737568306/halfspeedserverview1.mp4\nPlay QuakeLive for the most up to date netcode";
 
+const LFD_CHANNEL: u64 = 1072730815089344532;
 struct Handler;
 
 #[async_trait]
@@ -95,6 +96,9 @@ async fn main() {
 #[description = "Pings people around your rating for duel"]
 #[aliases("lookingforduel", "duel")]
 async fn lfd(ctx: &Context, msg : &Message) -> CommandResult{
+    if msg.channel_id != LFD_CHANNEL {
+        return Ok(());
+    }
     let m = msg.member(ctx).await?;
     let member_roles: Vec<Role> = m.roles(ctx).unwrap();
     let mut highest_position = 0i64;
