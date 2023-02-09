@@ -1,10 +1,11 @@
-use std::env::{self, vars_os};
-
+use std::env;
 use serenity::async_trait;
 use serenity::client::{Client, Context};
 use serenity::framework::standard::help_commands::Command;
+use serenity::model::mention;
 use serenity::prelude::*;
 use serenity::model::{
+    mention::Mention,
     guild::Member,
     guild::Role,
     channel::Message,
@@ -32,12 +33,23 @@ impl EventHandler for Handler {
     }
 
     async fn message(&self, ctx:Context, msg: Message){
-        if env::var_os("FUCKQ3").unwrap().into_string() == "YES"
+        
+        match env::var_os("FUCKQ3"){
+            Some(s) => {
+                if s.into_string().unwrap() == "YES"{
+                    msg.reply_ping(ctx, Q3_REPLY_STRING)
+                        .await
+                        .expect("Err replying");
+                        return;
+                }
+            },
+            _ => ()
+        }
         for n in NONSENSE{
             if msg.content.to_lowercase().contains(n) && !msg.author.bot {
                 msg.reply_ping(&ctx, Q3_REPLY_STRING)
                 .await
-                .expect("Err processing nonsense");
+                .expect("Err replying");
                 return;
             }
         }
@@ -89,7 +101,13 @@ async fn lfd(ctx: &Context, msg : &Message) -> CommandResult{
     for role in member_roles{
         if role.position > highest_position { highest_position = role.position; }
     }
-
+    let mut roles_to_ping: String = String::from("**Looking for Duel**");
+    for guild_role in msg.guild(ctx).unwrap().roles.values() {
+        if guild_role.position <= highest_position && guild_role.position > 0 || guild_role.position == highest_position + 1 {
+            roles_to_ping.push_str(&format!(" {} ", Mention::from(guild_role.id)));
+        }
+    }
+    msg.channel_id.send_message(ctx, |m| m.content(roles_to_ping)).await?;
 
     return Ok(())
 }
